@@ -3,12 +3,16 @@ import random
 import sys
 import pygame
 import numpy as np
+import screeninfo
+
+monitor_info = screeninfo.get_monitors()[0]
 
 ##PARAMETERS
 class GameParameters:
     def __init__(self):
-        self.width = 720
-        self.height = 1080
+        # these are backwards for a vertical game
+        self.width = monitor_info.height / 2
+        self.height = monitor_info.width / 2
         self.columns = 18
         self.background_color = 'black'
         self.starting_drop_rate = 50
@@ -185,7 +189,7 @@ def increment_player_indexer(): ##Drop the block at constant rate. Double speed 
     global touching_surface
 
     if touching_surface:
-        row_indexer = int(drop_timer)
+        row_indexer = int(params.drop_timer)
         return
 
     if keys[pygame.K_DOWN] or keys[pygame.K_s]:
@@ -193,14 +197,14 @@ def increment_player_indexer(): ##Drop the block at constant rate. Double speed 
     else:
         drop_rate = default_drop_rate
 
-    drop_timer += drop_rate
-    row_indexer = int(drop_timer)
+    params.drop_timer += drop_rate
+    row_indexer = int(params.drop_timer)
 
     lowest_occupied_row = get_lowest_occupied_row(active_piece.shape)
     max_row_for_mask = block_matrix_height - 1 - lowest_occupied_row
     if row_indexer > max_row_for_mask:
         row_indexer = max_row_for_mask
-        drop_timer = row_indexer
+        params.drop_timer = row_indexer
 
 def rotate_piece():
     global block_matrix
@@ -316,7 +320,7 @@ def reset_player_block():
     global cleared_rows
     global default_drop_rate
     global double_drop_rate
-    drop_timer = 0 #sends player to top
+    params.drop_timer = 0 #sends player to top
     if row_indexer == 0:
         game_over()
     lock_timer = 0
@@ -358,7 +362,7 @@ def update_board():
                 surf = pygame.Surface(block_size)
 
                 if row_values[col] == 1:
-                    surf.fill(params.player_block_color)
+                    surf.fill(player_block_color)
                 else:
                     perm_color = color_matrix[row, col]
                     surf.fill(perm_color)
@@ -374,7 +378,7 @@ def update_board():
 
     screen.blit(ground_surface,ground_rect)
     #print('board state \n', block_matrix)
-    screen.blit(text_surface, (params.width - (params.width * .15),params.height - params.ground_height * .85))
+    screen.blit(text_surface, (params.width - (params.width * .15),params.height - ground_height * .85))
     render_held_piece()
 
 

@@ -23,7 +23,7 @@ class GameParameters:
         self.ground_color = 'white'
         self.score_color = 'black'
         self.title = 'Tetris!!'
-        
+
 params = GameParameters()
 
 ## !!!
@@ -79,56 +79,60 @@ class Piece:
         self.id = id_ref
         self.color = color
 
-rhode_island_z_shape = [0,0,0,0,
-                        0,1,1,0,
-                        1,1,0,0,
-                        0,0,0,0]
-rhode_island_z_shape = np.reshape(rhode_island_z_shape, (4,4))
-rhode_island_z = Piece(rhode_island_z_shape, 1,'light green')
+class Pieces:
+    def __init__(self):
+        self.rhode_island_z_shape = [0,0,0,0,
+                                    0,1,1,0,
+                                    1,1,0,0,
+                                    0,0,0,0]
+        self.rhode_island_z_shape = np.reshape(self.rhode_island_z_shape, (4,4))
+        self.rhode_island_z = Piece(self.rhode_island_z_shape, 1,'light green')
 
-orange_ricky_shape = [0,1,1,0,
-                     0,0,1,0,
-                     0,0,1,0,
-                     0,0,0,0]
-orange_ricky_shape = np.reshape(orange_ricky_shape, (4,4))
-orange_ricky = Piece(orange_ricky_shape, 2, 'orange')
+        self.orange_ricky_shape = [0,1,1,0,
+                                    0,0,1,0,
+                                    0,0,1,0,
+                                    0,0,0,0]
+        self.orange_ricky_shape = np.reshape(self.orange_ricky_shape, (4,4))
+        self.orange_ricky = Piece(self.orange_ricky_shape, 2, 'orange')
 
-blue_ricky_shape =  [0,1,1,0,
-                     0,1,0,0,
-                     0,1,0,0,
-                     0,0,0,0]
-blue_ricky_shape = np.reshape(blue_ricky_shape, (4,4))
-blue_ricky = Piece(blue_ricky_shape, 3, 'blue')
+        self.blue_ricky_shape = [0,1,1,0,
+                                0,1,0,0,
+                                0,1,0,0,
+                                0,0,0,0]
+        self.blue_ricky_shape = np.reshape(self.blue_ricky_shape, (4,4))
+        self.blue_ricky = Piece(self.blue_ricky_shape, 3, 'blue')
 
-cleveland_z_shape = [0,0,0,0,
-                     1,1,0,0,
-                     0,1,1,0,
-                     0,0,0,0]
-cleveland_z_shape = np.reshape(cleveland_z_shape, (4,4))
-cleveland_z = Piece(cleveland_z_shape, 4, 'red')
+        self.cleveland_z_shape = [0,0,0,0,
+                                1,1,0,0,
+                                0,1,1,0,
+                                0,0,0,0]
+        self.cleveland_z_shape = np.reshape(self.cleveland_z_shape, (4,4))
+        self.cleveland_z = Piece(self.cleveland_z_shape, 4, 'red')
 
-smash_boy_shape =   [0,0,0,0,
-                     0,1,1,0,
-                     0,1,1,0,
-                     0,0,0,0]
-smash_boy_shape = np.reshape(smash_boy_shape, (4,4))
-smash_boy = Piece(smash_boy_shape, 5, 'yellow')
+        self.smash_boy_shape = [0,0,0,0,
+                                0,1,1,0,
+                                0,1,1,0,
+                                0,0,0,0]
+        self.smash_boy_shape = np.reshape(self.smash_boy_shape, (4,4))
+        self.smash_boy = Piece(self.smash_boy_shape, 5, 'yellow')
 
-teewee_shape =      [0,0,0,0,
-                     0,0,1,0,
-                     0,1,1,0,
-                     0,0,1,0]
-teewee_shape = np.reshape(teewee_shape, (4,4))
-teewee = Piece(teewee_shape, 6, 'purple')
+        self.teewee_shape = [0,0,0,0,
+                            0,0,1,0,
+                            0,1,1,0,
+                            0,0,1,0]
+        self.teewee_shape = np.reshape(self.teewee_shape, (4,4))
+        self.teewee = Piece(self.teewee_shape, 6, 'purple')
 
-hero_shape =        [0,0,1,0,
-                     0,0,1,0,
-                     0,0,1,0,
-                     0,0,1,0]
-hero_shape = np.reshape(hero_shape, (4,4))
-hero = Piece(hero_shape, 7, 'light blue')
+        self.hero_shape = [0,0,1,0,
+                        0,0,1,0,
+                        0,0,1,0,
+                        0,0,1,0]
+        self.hero_shape = np.reshape(self.hero_shape, (4,4))
+        self.hero = Piece(self.hero_shape, 7, 'light blue')
 
-tetris_pieces_list = [rhode_island_z, orange_ricky,blue_ricky,cleveland_z,smash_boy,teewee,hero]
+        self.tetris_pieces_list = [self.rhode_island_z, self.orange_ricky,self.blue_ricky,self.cleveland_z,self.smash_boy,self.teewee,self.hero]
+
+pieces = Pieces()
 
 def assign_random_piece():
     global piece_assigner
@@ -138,11 +142,11 @@ def assign_random_piece():
     global piece_assigner
     global player_block_color
     piece_assigner = random.randint(1,7)
-    for t in tetris_pieces_list:
+    for t in pieces.tetris_pieces_list:
         if t.id == piece_assigner:
-          active_piece = t
-          piece_h, piece_w = active_piece.shape.shape
-          player_block_color = active_piece.color
+            active_piece = t
+            piece_h, piece_w = active_piece.shape.shape
+            player_block_color = active_piece.color
 
 assign_random_piece()
 

@@ -1,5 +1,4 @@
 import pygame
-from sys import exit
 import numpy as np
 from collections import defaultdict
 import random
@@ -492,7 +491,7 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-            exit()
+            sys.exit()
 
 ##CONTROLS AND INPUT COOLDOWN
     keys = pygame.key.get_pressed()

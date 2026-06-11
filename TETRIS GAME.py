@@ -1,5 +1,6 @@
 from collections import defaultdict
 import random
+import sys
 import pygame
 import numpy as np
 

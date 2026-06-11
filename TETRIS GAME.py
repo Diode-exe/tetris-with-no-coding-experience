@@ -134,7 +134,7 @@ def assign_random_piece():
           active_piece = t
           piece_h, piece_w = active_piece.shape.shape
           player_block_color = active_piece.color
-        
+
 assign_random_piece()
 
 def get_lowest_occupied_row(piece_shape):
@@ -188,7 +188,7 @@ def increment_player_indexer(): ##Drop the block at constant rate. Double speed 
             drop_rate = double_drop_rate
     else:
         drop_rate = default_drop_rate
-    
+
     drop_timer += drop_rate
     row_indexer = int(drop_timer)
 
@@ -223,7 +223,7 @@ def rotate_piece():
                     active_piece.shape = new_shape
                     column_indexer = column_indexer + 1
                     break
-               
+
                 if board_c >= column_count: ##right side of arena
                     active_piece.shape = new_shape
                     column_indexer = column_indexer - 1
@@ -283,7 +283,7 @@ def hold_piece():
             reset_player_block()
             swapped_this_turn = True
             render_held_piece()
-            
+
         else: ## swap piece
             new_stored = active_piece
             active_piece = stored_piece
@@ -361,7 +361,7 @@ def update_board():
                     perm_color = color_matrix[row, col]
                     surf.fill(perm_color)
 
-                pygame.draw.rect(surf,block_border_color, surf.get_rect(), block_border_thickness) ## add border to block 
+                pygame.draw.rect(surf,block_border_color, surf.get_rect(), block_border_thickness) ## add border to block
                 rect = surf.get_rect(topleft = (block_coords))
                 block_dict[block_id] = [surf,rect]
                 block_id = block_id + 1
@@ -404,7 +404,7 @@ def check_for_obstacle():
     touching_bottom = (row_indexer + lowest_occupied_row + 1 >= block_matrix_height)
 
     perm_block_present = False
-    
+
     for c in range(piece_w): ##CHeck the value below the lowest 1 in each column
         col_ones = np.where(active_piece.shape[:, c] == 1)[0]
 
@@ -477,7 +477,7 @@ def increment_score():
     score = score + 1
     text_surface = my_font.render(str(score), True, score_color)
 
-        
+
 ## GAME RUN
 pygame.init()
 screen = pygame.display.set_mode((width, height))
@@ -498,7 +498,7 @@ while True:
     moved_this_frame = False
 
     if input_cooldown  == 0:
-        
+
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             block_matrix[block_matrix == 1] = 0 #remove the falling block so we can only hit twos
 
@@ -568,7 +568,7 @@ while True:
         if keys[pygame.K_SPACE]:
             hold_piece()
             input_cooldown = cooldown_rate
-    
+
     if input_cooldown > 0: ##run input cooldown timer
         input_cooldown = input_cooldown - 1
 

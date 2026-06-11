@@ -5,31 +5,35 @@ import pygame
 import numpy as np
 
 ##PARAMETERS
-width = 720
-height = 1080
-columns = 18
-background_color = 'black'
-starting_drop_rate = 50
-drop_timer = 0
-cooldown_rate = 10
-block_border_color = 'black'
-block_border_thickness = 1
-ground_color = 'white'
-score_color = 'black'
-title = 'Tetris!!'
+class GameParameters:
+    def __init__(self):
+        self.width = 720
+        self.height = 1080
+        self.columns = 18
+        self.background_color = 'black'
+        self.starting_drop_rate = 50
+        self.drop_timer = 0
+        self.cooldown_rate = 10
+        self.block_border_color = 'black'
+        self.block_border_thickness = 1
+        self.ground_color = 'white'
+        self.score_color = 'black'
+        self.title = 'Tetris!!'
+        
+params = GameParameters()
 
 ## !!!
-ground_height = height * .10
-default_drop_rate = starting_drop_rate / 1000
-double_drop_rate = starting_drop_rate / 500
+ground_height = params.height * .10
+default_drop_rate = params.params.starting_drop_rate / 1000
+double_drop_rate = params.params.starting_drop_rate / 500
 drop_rate = default_drop_rate
-input_cooldown = cooldown_rate
+input_cooldown = params.cooldown_rate
 block_dict = defaultdict(list)
-unit = int(width / columns)
+unit = int(params.width / params.columns)
 block_size = [unit,unit]
 row_indexer, row_indexer_max, column_indexer_max = 0,0,0
 double_drop_rate = drop_rate * 2
-column_count = columns - 2
+column_count = params.columns - 2
 block_id = 0
 stored_piece = None
 swapped_this_turn = False
@@ -41,8 +45,8 @@ score = 0
 cleared_rows = 0
 
 ##GRID SETUP
-unit = int(width / columns)
-playable_height = height - ground_height
+unit = int(params.width / params.columns)
+playable_height = params.height - ground_height
 block_matrix_height = int(playable_height / unit) + 2
 column_indexer =  int(column_count / 2) - 2
 
@@ -58,9 +62,9 @@ color_matrix = np.empty_like(block_matrix, dtype=object)
 color_matrix.fill(None)
 
 ##GROUND RECTANGLE
-ground_surface = pygame.Surface((width,ground_height))
-ground_surface.fill(ground_color)
-ground_rect = ground_surface.get_rect(topleft = (0,height-ground_height))
+ground_surface = pygame.Surface((params.width,ground_height))
+ground_surface.fill(params.ground_color)
+ground_rect = ground_surface.get_rect(topleft = (0,params.height-ground_height))
 
 y_offset = ground_rect.top - (block_matrix_height * unit)
 
@@ -258,7 +262,7 @@ def render_held_piece():
     global active_piece
     if stored_piece != None:
         preview_x = 50
-        preview_y = height - (ground_height - 5) ##create padding for held block on bottom of screen
+        preview_y = params.height - (ground_height - 5) ##create padding for held block on bottom of screen
         color = stored_piece.color
 
         for r in range(stored_piece.shape.shape[0]):
@@ -266,7 +270,7 @@ def render_held_piece():
                 if stored_piece.shape[r, c] == 1:
                     held_surf = pygame.Surface([block_size[0] *.5, block_size[0] *.5])
                     held_surf.fill(color)
-                    pygame.draw.rect(held_surf, block_border_color, held_surf.get_rect(), block_border_thickness)
+                    pygame.draw.rect(held_surf, params.block_border_color, held_surf.get_rect(), params.block_border_thickness)
 
                     held_surf_x = preview_x + (c * block_size[0] *.5)
                     held_surf_y = preview_y + (r * block_size[1] *.5)
@@ -312,7 +316,6 @@ def reset_player_block():
     global touching_surface
     global column_indexer
     global cleared_rows
-    global starting_drop_rate
     global default_drop_rate
     global double_drop_rate
     drop_timer = 0 #sends player to top
@@ -324,23 +327,23 @@ def reset_player_block():
     swapped_this_turn = False
 
     if cleared_rows >= 10: ##GRADUALLY INCREASE DROP SPEEDS BASED ON NUMBER OF CLEARED ROWS
-        default_drop_rate = starting_drop_rate / 800
-        double_drop_rate = starting_drop_rate / 400
+        default_drop_rate = params.starting_drop_rate / 800
+        double_drop_rate = params.starting_drop_rate / 400
     if cleared_rows >= 20:
-        default_drop_rate = starting_drop_rate / 700
-        double_drop_rate = starting_drop_rate / 350
+        default_drop_rate = params.starting_drop_rate / 700
+        double_drop_rate = params.starting_drop_rate / 350
     if cleared_rows >= 30:
-        default_drop_rate = starting_drop_rate / 600
-        double_drop_rate = starting_drop_rate / 300
+        default_drop_rate = params.starting_drop_rate / 600
+        double_drop_rate = params.starting_drop_rate / 300
     if cleared_rows >= 40:
-        default_drop_rate = starting_drop_rate / 500
-        double_drop_rate = starting_drop_rate / 250
+        default_drop_rate = params.starting_drop_rate / 500
+        double_drop_rate = params.starting_drop_rate / 250
     if cleared_rows >= 50:
-        default_drop_rate = starting_drop_rate / 400
-        double_drop_rate = starting_drop_rate / 200
+        default_drop_rate = params.starting_drop_rate / 400
+        double_drop_rate = params.starting_drop_rate / 200
     if cleared_rows >= 60:
-        default_drop_rate = starting_drop_rate / 300
-        double_drop_rate = starting_drop_rate / 150
+        default_drop_rate = params.starting_drop_rate / 300
+        double_drop_rate = params.starting_drop_rate / 150
 
 
 ##UPDATE BOARD BASED ON MATRIX
@@ -357,23 +360,23 @@ def update_board():
                 surf = pygame.Surface(block_size)
 
                 if row_values[col] == 1:
-                    surf.fill(player_block_color)
+                    surf.fill(params.player_block_color)
                 else:
                     perm_color = color_matrix[row, col]
                     surf.fill(perm_color)
 
-                pygame.draw.rect(surf,block_border_color, surf.get_rect(), block_border_thickness) ## add border to block
+                pygame.draw.rect(surf, params.block_border_color, surf.get_rect(), params.block_border_thickness) ## add border to block
                 rect = surf.get_rect(topleft = (block_coords))
                 block_dict[block_id] = [surf,rect]
                 block_id = block_id + 1
 
-    screen.fill(background_color) ##blit everything so it shows up in pygame
+    screen.fill(params.background_color) ##blit everything so it shows up in pygame
     for i in block_dict:
         screen.blit(block_dict[i][0], block_dict[i][1])
 
     screen.blit(ground_surface,ground_rect)
     #print('board state \n', block_matrix)
-    screen.blit(text_surface, (width - (width * .15),height - ground_height * .85))
+    screen.blit(text_surface, (params.width - (params.width * .15),params.height - params.ground_height * .85))
     render_held_piece()
 
 
@@ -466,7 +469,7 @@ def clear_completed_rows():
             color_matrix = np.delete(color_matrix, index, axis=0)
             color_matrix = np.vstack([np.full((1, color_matrix.shape[1]), None, dtype=object), color_matrix])
             score = score + 10
-            text_surface = my_font.render(str(score), False, score_color)
+            text_surface = my_font.render(str(score), False, params.score_color)
             cleared_rows = cleared_rows + 1
             print(cleared_rows)
 
@@ -476,17 +479,17 @@ def increment_score():
     global text_surface
     global score
     score = score + 1
-    text_surface = my_font.render(str(score), True, score_color)
+    text_surface = my_font.render(str(score), True, params.score_color)
 
 
 ## GAME RUN
 pygame.init()
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption(title)
+screen = pygame.display.set_mode((params.width, params.height))
+pygame.display.set_caption(params.title)
 clock = pygame.time.Clock()
 pygame.font.init()
 my_font = pygame.font.SysFont('Arial',30)
-text_surface = my_font.render(str(score), True, score_color)
+text_surface = my_font.render(str(score), True, params.score_color)
 
 while True:
     for event in pygame.event.get():
@@ -528,7 +531,7 @@ while True:
                 column_indexer -= 1
                 moved_this_frame = True
 
-            input_cooldown = cooldown_rate
+            input_cooldown = params.cooldown_rate
 
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             block_matrix[block_matrix == 1] = 0  # remove the falling block so we can only hit twos
@@ -558,17 +561,17 @@ while True:
                 column_indexer += 1
                 moved_this_frame = True
 
-            input_cooldown = cooldown_rate
+            input_cooldown = params.cooldown_rate
 
         if keys[pygame.K_UP] or keys[pygame.K_w] or keys[pygame.K_j] or keys[pygame.K_f]:
             rotated = rotate_piece()
             if rotated:
                 moved_this_frame = True
-            input_cooldown = cooldown_rate * 2
+            input_cooldown = params.cooldown_rate * 2
 
         if keys[pygame.K_SPACE]:
             hold_piece()
-            input_cooldown = cooldown_rate
+            input_cooldown = params.cooldown_rate
 
     if input_cooldown > 0: ##run input cooldown timer
         input_cooldown = input_cooldown - 1

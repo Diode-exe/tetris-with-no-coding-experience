@@ -1,7 +1,7 @@
-import pygame
-import numpy as np
 from collections import defaultdict
 import random
+import pygame
+import numpy as np
 
 ##PARAMETERS
 width = 720

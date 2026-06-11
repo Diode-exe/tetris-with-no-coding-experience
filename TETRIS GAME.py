@@ -65,9 +65,9 @@ y_offset = ground_rect.top - (block_matrix_height * unit)
 
 ##PIECES !!!
 class Piece:
-    def __init__(self,shape, id, color):
+    def __init__(self,shape, id_ref, color):
         self.shape = shape
-        self.id = id
+        self.id = id_ref
         self.color = color
 
 rhode_island_z_shape = [0,0,0,0,

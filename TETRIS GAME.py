@@ -24,8 +24,8 @@ params = GameParameters()
 
 ## !!!
 ground_height = params.height * .10
-default_drop_rate = params.params.starting_drop_rate / 1000
-double_drop_rate = params.params.starting_drop_rate / 500
+default_drop_rate = params.starting_drop_rate / 1000
+double_drop_rate = params.starting_drop_rate / 500
 drop_rate = default_drop_rate
 input_cooldown = params.cooldown_rate
 block_dict = defaultdict(list)
@@ -182,7 +182,6 @@ def stamp_piece_to_matrix(value):
 
 def increment_player_indexer(): ##Drop the block at constant rate. Double speed if holding UP
     global row_indexer
-    global drop_timer
     global touching_surface
 
     if touching_surface:
@@ -311,7 +310,6 @@ def game_over():
 def reset_player_block():
     global block_id
     global swapped_this_turn
-    global drop_timer
     global lock_timer
     global touching_surface
     global column_indexer
@@ -393,7 +391,6 @@ def clear_prev_pos():
 
 ##BOTTOM OF MATRIX CHECKER, PERMANENT BLOCK CHECKER, RETURN TO TOP IF PRESENT
 def check_for_obstacle():
-    global drop_timer
     global row_indexer
     global active_piece
     global player_block_color
@@ -429,10 +426,10 @@ def check_for_obstacle():
 
     if touching_bottom:
         row_indexer = block_matrix_height - 1 - lowest_occupied_row
-        drop_timer = row_indexer
+        params.drop_timer = row_indexer
 
     if perm_block_present:
-        drop_timer = row_indexer
+        params.drop_timer = row_indexer
 
     if touching_surface:
         if moved_this_frame:

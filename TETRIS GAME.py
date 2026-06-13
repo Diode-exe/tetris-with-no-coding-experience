@@ -52,8 +52,6 @@ cleared_rows = 0
 unit = int(params.width / params.columns)
 playable_height = params.height - ground_height
 block_matrix_height = int(playable_height / unit) + 2
-column_indexer =  int(column_count / 2) - 2
-
 
 ##BOARD MATRIX
 block_array_len = block_matrix_height * (column_count)
@@ -134,6 +132,13 @@ class Pieces:
 
 pieces = Pieces()
 
+class Indexers:
+    def __init__(self):
+        self.row_indexer = 0
+        self.column_indexer = int(column_count / 2) - 2
+
+indexers = Indexers()
+
 def assign_random_piece():
     global piece_assigner
     global active_piece
@@ -158,8 +163,8 @@ def stamp_piece_to_matrix(value):
     global block_matrix
     global color_matrix
 
-    row_start = row_indexer
-    col_start = column_indexer
+    row_start = indexers.row_indexer
+    col_start = indexers.column_indexer
     row_end = row_start + piece_h
     col_end = col_start + piece_w
 
@@ -189,32 +194,31 @@ def stamp_piece_to_matrix(value):
 
 
 def increment_player_indexer(): ##Drop the block at constant rate. Double speed if holding UP
-    global row_indexer
     global touching_surface
 
     if touching_surface:
-        row_indexer = int(params.drop_timer)
+        indexers.row_indexer = int(params.drop_timer)
         return
 
     if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            drop_rate = double_drop_rate
+        drop_rate = double_drop_rate
     else:
         drop_rate = default_drop_rate
 
     params.drop_timer += drop_rate
-    row_indexer = int(params.drop_timer)
+    indexers.row_indexer = int(params.drop_timer)
 
     lowest_occupied_row = get_lowest_occupied_row(active_piece.shape)
     max_row_for_mask = block_matrix_height - 1 - lowest_occupied_row
-    if row_indexer > max_row_for_mask:
-        row_indexer = max_row_for_mask
-        params.drop_timer = row_indexer
+    if indexers.row_indexer > max_row_for_mask:
+        indexers.row_indexer = max_row_for_mask
+        params.drop_timer = indexers.row_indexer
 
 def rotate_piece():
     global block_matrix
     global piece_h
     global piece_w
-    global column_indexer
+    global indexers
 
     block_matrix[block_matrix == 1] = 0  ##clear falling piece so we only collide with 2s
 
@@ -228,17 +232,17 @@ def rotate_piece():
 
             if new_shape[r, c] == 1:
 
-                board_r = row_indexer + r
-                board_c = column_indexer + c
+                board_r = indexers.row_indexer + r
+                board_c = indexers.column_indexer + c
 
                 if board_c < 0: ##left side of arena
                     active_piece.shape = new_shape
-                    column_indexer = column_indexer + 1
+                    indexers.column_indexer = indexers.column_indexer + 1
                     break
 
                 if board_c >= column_count: ##right side of arena
                     active_piece.shape = new_shape
-                    column_indexer = column_indexer - 1
+                    indexers.column_indexer = indexers.column_indexer - 1
                     break
 
                 if board_r < 0:
@@ -320,16 +324,17 @@ def reset_player_block():
     global swapped_this_turn
     global lock_timer
     global touching_surface
-    global column_indexer
+    global indexers
     global cleared_rows
     global default_drop_rate
     global double_drop_rate
     params.drop_timer = 0 #sends player to top
-    if row_indexer == 0:
+    if indexers.row_indexer == 0:
         game_over()
     lock_timer = 0
     touching_surface = False
-    column_indexer = int(column_count / 2) - 2
+    indexers.row_indexer = 0
+    indexers.column_indexer = int(column_count / 2) - 2
     swapped_this_turn = False
 
     if cleared_rows >= 10: ##GRADUALLY INCREASE DROP SPEEDS BASED ON NUMBER OF CLEARED ROWS
@@ -392,25 +397,23 @@ def clear_prev_pos():
 
     block_matrix[block_matrix == 1] = 0 ## clear out the matrix of old values from falling block
 
-    row_indexer_max = row_indexer + piece_h
-    column_indexer_max = column_indexer + piece_w
+    row_indexer_max = indexers.row_indexer + piece_h
+    column_indexer_max = indexers.column_indexer + piece_w
 
     stamp_piece_to_matrix(1)
 
 ##BOTTOM OF MATRIX CHECKER, PERMANENT BLOCK CHECKER, RETURN TO TOP IF PRESENT
 def check_for_obstacle():
-    global row_indexer
     global active_piece
     global player_block_color
     global piece_assigner
-    global column_indexer
     global lock_timer
     global moved_this_frame
     global touching_surface
 
     lowest_occupied_row = get_lowest_occupied_row(active_piece.shape)
 
-    touching_bottom = (row_indexer + lowest_occupied_row + 1 >= block_matrix_height)
+    touching_bottom = (indexers.row_indexer + lowest_occupied_row + 1 >= block_matrix_height)
 
     perm_block_present = False
 
@@ -422,8 +425,8 @@ def check_for_obstacle():
 
         bottom_r = int(np.max(col_ones))
 
-        check_r = row_indexer + bottom_r + 1
-        check_c = column_indexer + c
+        check_r = indexers.row_indexer + bottom_r + 1
+        check_c = indexers.column_indexer + c
 
         if 0 <= check_r < block_matrix_height and 0 <= check_c < column_count:
             if block_matrix[check_r, check_c] == 2:
@@ -433,11 +436,11 @@ def check_for_obstacle():
     touching_surface = touching_bottom or perm_block_present
 
     if touching_bottom:
-        row_indexer = block_matrix_height - 1 - lowest_occupied_row
-        params.drop_timer = row_indexer
+        indexers.row_indexer = block_matrix_height - 1 - lowest_occupied_row
+        params.drop_timer = indexers.row_indexer
 
     if perm_block_present:
-        params.drop_timer = row_indexer
+        params.drop_timer = indexers.row_indexer
 
     if touching_surface:
         if moved_this_frame:
@@ -517,8 +520,8 @@ while True:
                 for c in range(piece_w):
                     if active_piece.shape[r, c] == 1:
 
-                        check_r = row_indexer + r
-                        check_c = column_indexer + c - 1
+                        check_r = indexers.row_indexer + r
+                        check_c = indexers.column_indexer + c - 1
 
                         if check_c < 0:
                             can_move_left = False
@@ -533,7 +536,7 @@ while True:
                     break
 
             if can_move_left:
-                column_indexer -= 1
+                indexers.column_indexer -= 1
                 moved_this_frame = True
 
             input_cooldown = params.cooldown_rate
@@ -548,8 +551,8 @@ while True:
                 for c in range(piece_w):
                     if active_piece.shape[r, c] == 1:
 
-                        check_r = row_indexer + r
-                        check_c = column_indexer + c + 1
+                        check_r = indexers.row_indexer + r
+                        check_c = indexers.column_indexer + c + 1
                         if check_c >= matrix_w:
                             can_move_right = False
                             break
@@ -563,7 +566,7 @@ while True:
                     break
 
             if can_move_right:
-                column_indexer += 1
+                indexers.column_indexer += 1
                 moved_this_frame = True
 
             input_cooldown = params.cooldown_rate
